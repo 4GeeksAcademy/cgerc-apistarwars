@@ -71,6 +71,18 @@ def create_character():
     db.session.commit()
     return jsonify(new_character.serialize()), 201
 
+@app.route('/planet/<int:planet_id>', methods=['GET'])
+def get_planet(planet_id):
+    planet = Planet.query.get(planet_id)
+    if not planet:
+        raise APIException("Planeta no encontrado", status_code=404)
+    return jsonify(planet.serialize()), 200
+
+@app.route('/planets', methods=['GET'])
+def get_all_planets():
+    planets = Planet.query.all()
+    return jsonify([planet.serialize() for planet in planets]), 200
+
 
 @app.route('/people', methods=['GET'])
 def get_all_people():

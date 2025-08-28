@@ -41,6 +41,36 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
+@app.route('/planet', methods=['POST'])
+def create_planet():
+    data = request.get_json()
+    if not data or 'name' not in data:
+        raise APIException("Se requiere al menos el nombre del planeta", status_code=400)
+    
+    new_planet = Planet(
+        name=data['name'],
+        diameter=data.get('diameter'),
+        climate=data.get('climate'),
+        population=data.get('population')
+    )
+    db.session.add(new_planet)
+    db.session.commit()
+    return jsonify(new_planet.serialize()), 201
+
+@app.route('/character', methods=['POST'])
+def create_character():
+    data = request.get_json()
+    if not data or 'name' not in data:
+        raise APIException("Se requiere al menos el nombre del personaje", status_code=400)
+    
+    new_character = Character(
+        name=data['name'],
+        species=data.get('species')
+    )
+    db.session.add(new_character)
+    db.session.commit()
+    return jsonify(new_character.serialize()), 201
+
 
 @app.route('/people', methods=['GET'])
 def get_all_people():
@@ -66,6 +96,7 @@ def get_users_favorites():
         raise APIException("Usuario no encontrado", status_code=404)
     favorites = Favorite.query.filter_by(user_id=user_id).all()
     return jsonify([favorite.serialize() for favorite in favorites]), 200
+
 
 
 @app.route('/favorite/planet/<int:planet_id>', methods=['POST'])

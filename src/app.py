@@ -83,6 +83,43 @@ def get_all_planets():
     planets = Planet.query.all()
     return jsonify([planet.serialize() for planet in planets]), 200
 
+@app.route('/planet/<int:planet_id>', methods=['PUT'])
+def update_planet(planet_id):
+    data = request.get_json()
+    if not data:
+        raise APIException("JSON inválido", status_code=400)
+    
+    planet = Planet.query.get(planet_id)
+    if not planet:
+        raise APIException("Planeta no encontrado", status_code=404)
+    
+    planet.name = data.get('name', planet.name)
+    planet.diameter = data.get('diameter', planet.diameter)
+    planet.climate = data.get('climate', planet.climate)
+    planet.population = data.get('population', planet.population)
+    
+    db.session.commit()
+    return jsonify(planet.serialize()), 200
+
+@app.route('/character/<int:character_id>', methods=['PUT'])
+def update_character(character_id):
+    data = request.get_json()
+    if not data:
+        raise APIException("JSON inválido", status_code=400)
+    
+    character = Character.query.get(character_id)
+    if not character:
+        raise APIException("Personaje no encontrado", status_code=404)
+    
+    character.name = data.get('name', character.name)
+    character.species = data.get('species', character.species)
+    
+    db.session.commit()
+    return jsonify(character.serialize()), 200
+
+
+
+
 
 @app.route('/people', methods=['GET'])
 def get_all_people():

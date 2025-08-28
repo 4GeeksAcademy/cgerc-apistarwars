@@ -117,6 +117,25 @@ def update_character(character_id):
     db.session.commit()
     return jsonify(character.serialize()), 200
 
+@app.route('/planet/<int:planet_id>', methods=['DELETE'])
+def delete_planet(planet_id):
+    planet = Planet.query.get(planet_id)
+    if not planet:
+        raise APIException("Planeta no encontrado", status_code=404)
+    
+    db.session.delete(planet)
+    db.session.commit()
+    return jsonify({"msg": "Planeta eliminado correctamente"}), 200
+
+@app.route('/character/<int:character_id>', methods=['DELETE'])
+def delete_character(character_id):
+    character = Character.query.get(character_id)
+    if not character:
+        raise APIException("Personaje no encontrado", status_code=404)
+    
+    db.session.delete(character)
+    db.session.commit()
+    return jsonify({"msg": "Personaje eliminado correctamente"}), 200
 
 
 

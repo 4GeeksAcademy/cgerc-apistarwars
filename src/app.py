@@ -76,21 +76,6 @@ def create_character():
     return jsonify(new_character.serialize()), 201
 
 
-@app.route('/people', methods=['POST'])
-def create_people():
-    data = request.get_json()
-    if not data or 'name' not in data:
-        raise APIException(
-            "Se requiere al menos el nombre del personaje", status_code=400)
-
-    new_character = Character(
-        name=data['name'],
-        species=data.get('species')
-    )
-    db.session.add(new_character)
-    db.session.commit()
-    return jsonify(new_character.serialize()), 201
-
 
 @app.route('/planet/<int:planet_id>', methods=['GET'])
 def get_planet(planet_id):

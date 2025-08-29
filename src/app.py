@@ -86,6 +86,7 @@ def create_user():
     new_user = User(
         name=data['name'],
         email=data['email'],
+        is_active=data['is_active'],
         password=data['password']
 
     )

@@ -19,6 +19,7 @@ class User(db.Model):
         return {
             "id": self.id,
             "email": self.email,
+            "name": self.name
 
             # do not serialize the password, it's a security breach
         }

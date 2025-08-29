@@ -77,7 +77,7 @@ def create_character():
 
 
 
-@app.route('/planet/<int:planet_id>', methods=['GET'])
+@app.route('/planets/<int:planet_id>', methods=['GET'])
 def get_planet(planet_id):
     planet = Planet.query.get(planet_id)
     if not planet:
@@ -148,6 +148,11 @@ def delete_character(character_id):
     db.session.commit()
     return jsonify({"msg": "Personaje eliminado correctamente"}), 200
 
+
+@app.route('/users', methods=['GET'])
+def get_all_users():
+    users = User.query.all()
+    return jsonify([users.serialize() for users in users]), 200
 
 @app.route('/people', methods=['GET'])
 def get_all_people():

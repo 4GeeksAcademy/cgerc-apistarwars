@@ -76,6 +76,23 @@ def create_character():
     return jsonify(new_character.serialize()), 201
 
 
+@app.route('/user', methods=['POST'])
+def create_user():
+    data = request.get_json()
+    if not data or 'email' not in data:
+        raise APIException(
+            "Email requerido", status_code=400)
+
+    new_user = User(
+        name=data['name'],
+        email=data['email'],
+        password=data['password']
+
+    )
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify(new_user.serialize()), 201
+
 
 @app.route('/planets/<int:planet_id>', methods=['GET'])
 def get_planet(planet_id):
@@ -153,6 +170,7 @@ def delete_character(character_id):
 def get_all_users():
     users = User.query.all()
     return jsonify([users.serialize() for users in users]), 200
+
 
 @app.route('/people', methods=['GET'])
 def get_all_people():

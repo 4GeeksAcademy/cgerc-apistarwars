@@ -11,12 +11,15 @@ class User(db.Model):
     email: Mapped[str] = mapped_column(String, unique=True, nullable=False)
     password: Mapped[str] = mapped_column(String, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
-    favorites: Mapped[list["Favorite"]] = relationship("Favorite", back_populates="user")
+    favorites: Mapped[list["Favorite"]] = relationship(
+        "Favorite", back_populates="user")
+    name: Mapped[str] = mapped_column(String, nullable=False)
 
     def serialize(self):
         return {
             "id": self.id,
             "email": self.email,
+
             # do not serialize the password, it's a security breach
         }
 
@@ -28,7 +31,8 @@ class Planet(db.Model):
     diameter: Mapped[int] = mapped_column(Integer, nullable=True)
     climate: Mapped[str] = mapped_column(String, nullable=True)
     population: Mapped[int] = mapped_column(Integer, nullable=True)
-    favorites: Mapped[list["Favorite"]] = relationship("Favorite", back_populates="planet")
+    favorites: Mapped[list["Favorite"]] = relationship(
+        "Favorite", back_populates="planet")
 
     def serialize(self):
         return {
@@ -45,7 +49,8 @@ class Character(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String, nullable=False)
     species: Mapped[str] = mapped_column(String, nullable=True)
-    favorites: Mapped[list["Favorite"]] = relationship("Favorite", back_populates="character")
+    favorites: Mapped[list["Favorite"]] = relationship(
+        "Favorite", back_populates="character")
 
     def serialize(self):
         return {
@@ -66,8 +71,10 @@ class Favorite(db.Model):
         ForeignKey('character.id', ondelete='CASCADE'), nullable=True)
 
     user: Mapped["User"] = relationship("User", back_populates="favorites")
-    planet: Mapped["Planet"] = relationship("Planet", back_populates="favorites")
-    character: Mapped["Character"] = relationship("Character", back_populates="favorites")
+    planet: Mapped["Planet"] = relationship(
+        "Planet", back_populates="favorites")
+    character: Mapped["Character"] = relationship(
+        "Character", back_populates="favorites")
 
     def serialize(self):
         return {

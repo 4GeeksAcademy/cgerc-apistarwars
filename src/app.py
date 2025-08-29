@@ -41,12 +41,14 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
+
 @app.route('/planet', methods=['POST'])
 def create_planet():
     data = request.get_json()
     if not data or 'name' not in data:
-        raise APIException("Se requiere al menos el nombre del planeta", status_code=400)
-    
+        raise APIException(
+            "Se requiere al menos el nombre del planeta", status_code=400)
+
     new_planet = Planet(
         name=data['name'],
         diameter=data.get('diameter'),
@@ -57,12 +59,14 @@ def create_planet():
     db.session.commit()
     return jsonify(new_planet.serialize()), 201
 
+
 @app.route('/character', methods=['POST'])
 def create_character():
     data = request.get_json()
     if not data or 'name' not in data:
-        raise APIException("Se requiere al menos el nombre del personaje", status_code=400)
-    
+        raise APIException(
+            "Se requiere al menos el nombre del personaje", status_code=400)
+
     new_character = Character(
         name=data['name'],
         species=data.get('species')
@@ -71,6 +75,23 @@ def create_character():
     db.session.commit()
     return jsonify(new_character.serialize()), 201
 
+
+@app.route('/people', methods=['POST'])
+def create_people():
+    data = request.get_json()
+    if not data or 'name' not in data:
+        raise APIException(
+            "Se requiere al menos el nombre del personaje", status_code=400)
+
+    new_character = Character(
+        name=data['name'],
+        species=data.get('species')
+    )
+    db.session.add(new_character)
+    db.session.commit()
+    return jsonify(new_character.serialize()), 201
+
+
 @app.route('/planet/<int:planet_id>', methods=['GET'])
 def get_planet(planet_id):
     planet = Planet.query.get(planet_id)
@@ -78,66 +99,69 @@ def get_planet(planet_id):
         raise APIException("Planeta no encontrado", status_code=404)
     return jsonify(planet.serialize()), 200
 
+
 @app.route('/planets', methods=['GET'])
 def get_all_planets():
     planets = Planet.query.all()
     return jsonify([planet.serialize() for planet in planets]), 200
+
 
 @app.route('/planet/<int:planet_id>', methods=['PUT'])
 def update_planet(planet_id):
     data = request.get_json()
     if not data:
         raise APIException("JSON inválido", status_code=400)
-    
+
     planet = Planet.query.get(planet_id)
     if not planet:
         raise APIException("Planeta no encontrado", status_code=404)
-    
+
     planet.name = data.get('name', planet.name)
     planet.diameter = data.get('diameter', planet.diameter)
     planet.climate = data.get('climate', planet.climate)
     planet.population = data.get('population', planet.population)
-    
+
     db.session.commit()
     return jsonify(planet.serialize()), 200
+
 
 @app.route('/character/<int:character_id>', methods=['PUT'])
 def update_character(character_id):
     data = request.get_json()
     if not data:
         raise APIException("JSON inválido", status_code=400)
-    
+
     character = Character.query.get(character_id)
     if not character:
         raise APIException("Personaje no encontrado", status_code=404)
-    
+
     character.name = data.get('name', character.name)
     character.species = data.get('species', character.species)
-    
+
     db.session.commit()
     return jsonify(character.serialize()), 200
+
 
 @app.route('/planet/<int:planet_id>', methods=['DELETE'])
 def delete_planet(planet_id):
     planet = Planet.query.get(planet_id)
     if not planet:
         raise APIException("Planeta no encontrado", status_code=404)
-    
+
     db.session.delete(planet)
     db.session.commit()
     return jsonify({"msg": "Planeta eliminado correctamente"}), 200
+
 
 @app.route('/character/<int:character_id>', methods=['DELETE'])
 def delete_character(character_id):
     character = Character.query.get(character_id)
     if not character:
         raise APIException("Personaje no encontrado", status_code=404)
-    
+
     db.session.delete(character)
     db.session.commit()
     return jsonify({"msg": "Personaje eliminado correctamente"}), 200
-
-
 
 
 @app.route('/people', methods=['GET'])
@@ -164,7 +188,6 @@ def get_users_favorites():
         raise APIException("Usuario no encontrado", status_code=404)
     favorites = Favorite.query.filter_by(user_id=user_id).all()
     return jsonify([favorite.serialize() for favorite in favorites]), 200
-
 
 
 @app.route('/favorite/planet/<int:planet_id>', methods=['POST'])
